@@ -4,7 +4,7 @@
 #include <math.h>
 
 GLfloat angle, fAspect;
-GLdouble obsX=0, obsY=-200, obsZ=400;
+GLdouble obsX=0, obsY=-150, obsZ=400;
 
 
 void Desenha(void)
@@ -12,12 +12,86 @@ void Desenha(void)
     glClear(GL_COLOR_BUFFER_BIT);
 
     
-    //glColor3f(1.0f, 1.0f, 1.0f);
-    //glutWireCube(40.0f);
-    
+    //NUMERO PLAYER 1
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glPushMatrix();
+    glTranslated(-130.0,180.0,0.0);
+
+    glPushMatrix();
+    glTranslated(0.0,25.0,0.0);
+    glScaled(5.0,1.0,1.0);
+    glutSolidCube(5.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(0.0,-25.0,0.0);
+    glScaled(5.0,1.0,1.0);
+    glutSolidCube(5.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(10.0,0.0,0.0);
+    glScaled(1.0,10.0,1.0);
+    glutSolidCube(5.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(-10.0,0.0,0.0);
+    glScaled(1.0,10.0,1.0);
+    glutSolidCube(5.0f);
+    glPopMatrix();
+
+    glPopMatrix();
+
+    //NUMERO PLAYER 2
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glPushMatrix();
+    glTranslated(130.0,180.0,0.0);
+
+    glPushMatrix();
+    glTranslated(0.0,25.0,0.0);
+    glScaled(5.0,1.0,1.0);
+    glutSolidCube(5.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(0.0,-25.0,0.0);
+    glScaled(5.0,1.0,1.0);
+    glutSolidCube(5.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(10.0,0.0,0.0);
+    glScaled(1.0,10.0,1.0);
+    glutSolidCube(5.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(-10.0,0.0,0.0);
+    glScaled(1.0,10.0,1.0);
+    glutSolidCube(5.0f);
+    glPopMatrix();
+
+    glPopMatrix();
+
+    //BARRAS
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glPushMatrix();
+    glTranslated(0.0,130.0,0.0);
+    glScaled(500.0,1.0,1.0);
+    glutSolidCube(5.0f);
+    glPopMatrix();
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glPushMatrix();
+    glTranslated(0.0,-130.0,0.0);
+    glScaled(500.0,1.0,1.0);
+    glutSolidCube(5.0f);
+    glPopMatrix();
     
     glColor3f(0.0f, 0.0f, 1.0f);
 
+    //PLAYERS
     glPushMatrix();
     glTranslated(180.0,0.0,0.0);
     glScaled(1.0,3.0,1.0);
@@ -33,7 +107,7 @@ void Desenha(void)
     glutSolidCube(25.0f);
     glPopMatrix();
 
-
+    //BOLA
     glColor3f(1.0f, 1.0f, 1.0f);
     glutSolidSphere(15.0,50.0,50.0);
 
@@ -143,7 +217,7 @@ int main(int argc, char *argv[])
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(800, 600);
-    glutCreateWindow("Chazao");
+    glutCreateWindow("PONG");
     glutDisplayFunc(Desenha);
     glutReshapeFunc(AlteraTamanhoJanela);
     glutMouseFunc(GerenciaMouse);
