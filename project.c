@@ -52,6 +52,7 @@ void PosicionaObservador(void)
 {
 
     glMatrixMode(GL_MODELVIEW);
+    //glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
     gluLookAt(obsX,obsY,obsZ, 0,0,0, 0,1,0);
