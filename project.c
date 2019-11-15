@@ -2,9 +2,26 @@
 #include <stdlib.h>
 #include <GL/glut.h>
 #include <math.h>
+#include "objetos.h"
 
 GLfloat angle, fAspect;
+//Pontuacao
+int P1 = 0;
+int P2 = 0;
 GLdouble obsX=0, obsY=-150, obsZ=400;
+//Posicao Players
+GLdouble P1y=0;
+GLdouble P2y=0;
+
+//Configuracao da altura do campo
+GLdouble alturaCampo = 130;
+GLdouble larguraCampo = 180;
+
+//Posicao do Potaro (Bola)
+static GLdouble ball_pos_x = 0, ball_pos_y = 0, ball_radius = 15;
+static GLfloat ball_velocity_x = 0, ball_velocity_y = 0, speed_increment = 0.1;
+static GLfloat rotate = 0;
+
 
 
 void Desenha(void)
@@ -13,105 +30,27 @@ void Desenha(void)
 
     
     //NUMERO PLAYER 1
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glPushMatrix();
-    glTranslated(-130.0,180.0,0.0);
+    numero(1,P1);
 
-    glPushMatrix();
-    glTranslated(0.0,25.0,0.0);
-    glScaled(5.0,1.0,1.0);
-    glutSolidCube(5.0f);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslated(0.0,-25.0,0.0);
-    glScaled(5.0,1.0,1.0);
-    glutSolidCube(5.0f);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslated(10.0,0.0,0.0);
-    glScaled(1.0,10.0,1.0);
-    glutSolidCube(5.0f);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslated(-10.0,0.0,0.0);
-    glScaled(1.0,10.0,1.0);
-    glutSolidCube(5.0f);
-    glPopMatrix();
-
-    glPopMatrix();
 
     //NUMERO PLAYER 2
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glPushMatrix();
-    glTranslated(130.0,180.0,0.0);
+    numero(2,P2);
 
-    glPushMatrix();
-    glTranslated(0.0,25.0,0.0);
-    glScaled(5.0,1.0,1.0);
-    glutSolidCube(5.0f);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslated(0.0,-25.0,0.0);
-    glScaled(5.0,1.0,1.0);
-    glutSolidCube(5.0f);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslated(10.0,0.0,0.0);
-    glScaled(1.0,10.0,1.0);
-    glutSolidCube(5.0f);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslated(-10.0,0.0,0.0);
-    glScaled(1.0,10.0,1.0);
-    glutSolidCube(5.0f);
-    glPopMatrix();
-
-    glPopMatrix();
 
     //BARRAS
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glPushMatrix();
-    glTranslated(0.0,130.0,0.0);
-    glScaled(500.0,1.0,1.0);
-    glutSolidCube(5.0f);
-    glPopMatrix();
+    barras(alturaCampo);
 
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glPushMatrix();
-    glTranslated(0.0,-130.0,0.0);
-    glScaled(500.0,1.0,1.0);
-    glutSolidCube(5.0f);
-    glPopMatrix();
-    
-    glColor3f(0.0f, 0.0f, 1.0f);
 
     //PLAYERS
-    glPushMatrix();
-    glTranslated(180.0,0.0,0.0);
-    glScaled(1.0,3.0,1.0);
-    glutSolidCube(25.0f);
-    glPopMatrix();
+    player(1,P1y,larguraCampo);
 
-
-    glColor3f(1.0f, 0.0f, 0.0f);
-
-    glPushMatrix();
-    glTranslated(-180.0,0.0,0.0);
-    glScaled(1.0,3.0,1.0);
-    glutSolidCube(25.0f);
-    glPopMatrix();
+    player(2,P2y,larguraCampo);
 
     //BOLA
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glutSolidSphere(15.0,50.0,50.0);
+    Potaro(ball_pos_x,ball_pos_y,rotate); //nome da bola
 
     glutSwapBuffers();
+    glFlush();
 }
 
 
@@ -162,7 +101,7 @@ void AlteraTamanhoJanela(GLsizei w, GLsizei h)
 }
 
 
-void GerenciaMouse(int button, int state, int x, int y)
+/*void GerenciaMouse(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON)
         if (state == GLUT_DOWN)
@@ -178,6 +117,75 @@ void GerenciaMouse(int button, int state, int x, int y)
         }
     EspecificaParametrosVisualizacao();
     glutPostRedisplay();
+}*/
+
+void startGame() {
+
+    // Movendo o Pentaro
+    ball_pos_x += ball_velocity_x;
+    ball_pos_y += ball_velocity_y;
+    rotate++;
+
+    // Pentaro colidiu em cima ou em baixo
+    if (ball_pos_y + ball_radius > alturaCampo || ball_pos_y - ball_radius < -alturaCampo)
+        ball_velocity_y = -ball_velocity_y;
+
+    // P1 acertou o Pentaro
+    if (ball_pos_x - ball_radius - 5 < -larguraCampo && ball_pos_x - ball_radius < -larguraCampo)
+        if (ball_pos_y < P1y + 56 && ball_pos_y > P1y - 56) { //56 é a altura do player
+            ball_velocity_x = -ball_velocity_x;
+            //ball_velocity_x += speed_increment;
+            //paddile_velocity += speed_increment;
+        }
+
+
+    // P2 acertou o Pentaro
+    if (ball_pos_x + ball_radius + 5 > larguraCampo && ball_pos_x + ball_radius < larguraCampo)
+        if (ball_pos_y < P2y + 56 && ball_pos_y > P2y - 56) //56 é a altura do player
+            ball_velocity_x = -ball_velocity_x;
+
+    // P1 pontuou
+    if (ball_pos_x + ball_radius > larguraCampo) {
+        P1++;
+        printf("Player 1 = %d \n", P1);
+        ball_velocity_x = -ball_velocity_x;
+    }
+
+    // P2 pontuou
+    if (ball_pos_x - ball_radius < -larguraCampo) {
+        P2++;
+        printf("Player 2 = %d \n", P2);
+        ball_velocity_x = -ball_velocity_x;
+    }
+
+    glutPostRedisplay();
+}
+
+void GerenciaMouse(int button, int state, int x, int y) {
+    switch (button) {
+        // Botao Esquerdo - Inicia uma velocidade aleatoria entre (ran(5) - rand(3))
+        case GLUT_LEFT_BUTTON:
+            if (state == GLUT_DOWN)
+            ball_velocity_x = (rand() % 2);// -  (rand() % 3);
+            ball_velocity_y = (rand() % 2);// -  (rand() % 3);
+            /*ball_velocity_x = (rand() % 5) -  (rand() % 3);
+            ball_velocity_y = (rand() % 5) -  (rand() % 3);*/
+
+            glutIdleFunc(startGame);
+            break;
+        // Botao do meio reseta a bola, os jogadores e a pontuacao
+        case GLUT_MIDDLE_BUTTON:
+            // Reseta
+            ball_pos_x = ball_pos_y = 0;
+            P1y = P2y = 0;
+            P1 = P2 = 0;
+            if (state == GLUT_DOWN)
+                // Removendo bounce
+                glutIdleFunc(NULL);
+            break;
+        default:
+        break;
+    }
 }
 
 
@@ -207,7 +215,35 @@ void SpecialKeys(int key, int x, int y)
     }
     glLoadIdentity();
     gluLookAt(obsX, obsY, obsZ, 0, 0, 0, 0, 1, 0);
-    //gluLookAt(obsX, obsY, obsZ, 0, 0, 0, 0, 1, 0);
+    glutPostRedisplay();
+}
+
+void Keyboard(unsigned char key, int x, int y)
+{
+    //O 33 somado e subtraido se deve ao tamanho do player
+    switch (key)
+    {
+    case 'q':
+    case 'Q':
+        if(P1y  < (alturaCampo - 33))
+            P1y = P1y + 5;
+        break;
+    case 'a':
+    case 'A':
+        if(P1y  > -(alturaCampo - 33))
+            P1y = P1y - 5;
+        break;
+    case 'o':
+    case 'O':
+        if(P2y  < (alturaCampo - 33))
+            P2y = P2y + 5;
+        break;
+    case 'l':
+    case 'L':
+        if(P2y  > -(alturaCampo - 33))
+            P2y = P2y - 5;
+        break;
+    }
     glutPostRedisplay();
 }
 
@@ -222,6 +258,7 @@ int main(int argc, char *argv[])
     glutReshapeFunc(AlteraTamanhoJanela);
     glutMouseFunc(GerenciaMouse);
     glutSpecialFunc(SpecialKeys);
+    glutKeyboardFunc(Keyboard);
     Inicializa();
     glutMainLoop();
 }
