@@ -51,14 +51,14 @@ void barras(GLdouble alturaCampo){
     glColor3f(1.0f, 1.0f, 1.0f);
     glPushMatrix();
     glTranslated(0.0,alturaCampo,0.0);
-    glScaled(500.0,1.0,1.0);
-    glutSolidCube(5.0f);
+    glScaled(100.0,1.0,1.0);
+    glutSolidCube(1.0f);
     glPopMatrix();
 
     glPushMatrix();
     glTranslated(0.0,-alturaCampo,0.0);
-    glScaled(500.0,1.0,1.0);
-    glutSolidCube(5.0f);
+    glScaled(100.0,1.0,1.0);
+    glutSolidCube(1.0f);
     glPopMatrix();
 }
 void player(int num, GLdouble Py, GLdouble larguraCampo){
@@ -76,9 +76,10 @@ void player(int num, GLdouble Py, GLdouble larguraCampo){
     }
         
 
+    //glScaled(1.0,2.8,1.0);
+    //glutSolidCube(20.0f);
     glScaled(1.0,2.8,1.0);
-    glutSolidCube(20.0f);
-
+    glutSolidCube(5.0f);
 
     glPopMatrix();
 }
@@ -88,7 +89,8 @@ void Potaro(GLdouble Px,GLdouble Py,GLdouble rotate)
     glPushMatrix();
     glTranslated(Px,Py,0.0);
     glRotatef(rotate,0.0,0.0,1.0);
-    glScaled(4.0,4.0,4.0);
+    //glScaled(4.0,4.0,4.0);
+    glScaled(1.0,1.0,1.0);
     
         //Corpo + cabeça
         glPushMatrix();

@@ -49,7 +49,7 @@ void Desenha(void)
     //BOLA
     Potaro(ball_pos_x,ball_pos_y,rotate); //nome da bola
 
-    glutSwapBuffers();
+    //glutSwapBuffers();
     glFlush();
 }
 
@@ -132,7 +132,7 @@ void startGame() {
 
     // P1 acertou o Pentaro
     if (ball_pos_x - ball_radius - 5 < -larguraCampo && ball_pos_x - ball_radius < -larguraCampo)
-        if (ball_pos_y < P1y + 56 && ball_pos_y > P1y - 56) { //56 é a altura do player
+        if (ball_pos_y < P1y + 28 && ball_pos_y > P1y - 28) { //28 é a altura do player
             ball_velocity_x = -ball_velocity_x;
             //ball_velocity_x += speed_increment;
             //paddile_velocity += speed_increment;
@@ -141,7 +141,7 @@ void startGame() {
 
     // P2 acertou o Pentaro
     if (ball_pos_x + ball_radius + 5 > larguraCampo && ball_pos_x + ball_radius < larguraCampo)
-        if (ball_pos_y < P2y + 56 && ball_pos_y > P2y - 56) //56 é a altura do player
+        if (ball_pos_y < P2y + 28 && ball_pos_y > P2y - 28) //28 é a altura do player
             ball_velocity_x = -ball_velocity_x;
 
     // P1 pontuou
@@ -251,7 +251,7 @@ void Keyboard(unsigned char key, int x, int y)
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize(800, 600);
     glutCreateWindow("PONG");
     glutDisplayFunc(Desenha);
