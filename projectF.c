@@ -8,12 +8,20 @@
 GLfloat angle, fAspect;
 GLfloat angle45 = 45;
 //Pontuacao
-int P1 = 7;
+int P1 = 0;
 int P2 = 0;
 GLdouble obsX=0, obsY=-150, obsZ=400;
 //Posicao Players
 GLdouble P1y=0;
 GLdouble P2y=0;
+
+int eixo = -1;
+int direcao = 0;
+int conta = 0;
+
+int winner = 0;
+
+
 
 //Configuracao da altura do campo
 GLdouble alturaCampo = 130;
@@ -32,14 +40,15 @@ typedef struct BMPImagem
 }BMPImage;
 
 /* Qtd máxima de texturas a serem usadas no programa */
-#define MAX_NO_TEXTURES 2
+#define MAX_NO_TEXTURES 3
 
 /* vetor com os números das texturas */
 GLuint texture_id[MAX_NO_TEXTURES];
 
 char* filenameArray[MAX_NO_TEXTURES] = {
 		"porter.bmp",
-		"madeon.bmp"
+		"madeon.bmp",
+        "campo.bmp"
 };
 
 GLUquadricObj *obj;
@@ -47,10 +56,7 @@ GLUquadricObj *obj;
 GLfloat angleX = 0.0f;
 GLfloat angleY = 0.0f;
 
-//-----------------------------------------------------------------------------
-// Name: getBitmapImageData()
-// Desc: Simply image loader for 24 bit BMP files.
-//-----------------------------------------------------------------------------
+
 void getBitmapImageData( char *pFileName, BMPImage *pImage )
 {
     FILE *pFile = NULL;
@@ -61,7 +67,7 @@ void getBitmapImageData( char *pFileName, BMPImage *pImage )
     if( (pFile = fopen(pFileName, "rb") ) == NULL )
 		printf("ERROR: getBitmapImageData - %s not found.\n", pFileName);
 
-    // Seek forward to width and height info
+
     fseek( pFile, 18, SEEK_CUR );
 
     if( (i = fread(&pImage->width, 4, 1, pFile) ) != 1 )
@@ -82,12 +88,9 @@ void getBitmapImageData( char *pFileName, BMPImage *pImage )
     if( nNumBPP != 24 )
 		printf("ERROR: getBitmapImageData - BPP from %s.\n ", pFileName);
 
-    // Seek forward to image data
+
     fseek( pFile, 24, SEEK_CUR );
 
-	// Calculate the image's total size in bytes. Note how we multiply the
-	// result of (width * height) by 3. This is becuase a 24 bit color BMP
-	// file will give you 3 bytes per pixel.
     int nTotalImagesize = (pImage->width * pImage->height) * 3;
 
     pImage->data = (char*) malloc( nTotalImagesize );
@@ -95,9 +98,6 @@ void getBitmapImageData( char *pFileName, BMPImage *pImage )
     if( (i = fread(pImage->data, nTotalImagesize, 1, pFile) ) != 1 )
 		printf("ERROR: getBitmapImageData - Couldn't read image data from %s.\n ", pFileName);
 
-    //
-	// Finally, rearrange BGR to RGB
-	//
 
 	char charTemp;
     for( i = 0; i < nTotalImagesize; i += 3 )
@@ -109,14 +109,14 @@ void getBitmapImageData( char *pFileName, BMPImage *pImage )
 }
 
 
-/*Função para Carregar uma imagem .BMP */
+
 void CarregaTexturas()
 {
     BMPImage textura;
 
-    /* Define quantas texturas serão usadas no programa  */
-    glGenTextures(MAX_NO_TEXTURES, texture_id); /* 1 = uma textura; */
-								/* texture_id = vetor que guardas os números das texturas */
+
+    glGenTextures(MAX_NO_TEXTURES, texture_id);
+								
 
     int i;
     for ( i=0; i<MAX_NO_TEXTURES; i++ ) {
@@ -130,94 +130,44 @@ void CarregaTexturas()
     }
 }
 
-/* **********************************************************************
-  void initTexture(void)
-		Define a textura a ser usada
 
- ********************************************************************** */
 void initTexture (void)
 {
 
-	/* Habilita o uso de textura bidimensional  */
+
 	glEnable ( GL_TEXTURE_2D );
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-	/*Carrega os arquivos de textura */
-  //  CarregaTextura("tunnelTexture.bmp");
-    //CarregaTextura("tex2.bmp");
     CarregaTexturas();
 
 }
 
-void lightning(){
-    GLfloat light0_pos[] = {2.0f, 2.0f, 2.0f, 1.0f};
-    GLfloat white[] = {1.0f, 1.0f, 1.0f, 1.0f};
-    GLfloat black[] = {0.0f, 0.0f, 0.0f, 1.0f};
 
-    glLightfv(GL_LIGHT0,GL_POSITION,light0_pos);
-    glLightfv(GL_LIGHT0,GL_AMBIENT,black);
-    glLightfv(GL_LIGHT0,GL_DIFFUSE,white);
-    glLightfv(GL_LIGHT0,GL_SPECULAR,white);
-
-    //Atenuação radial
-    //glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.5f);   //define a0
-    //glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.15f);    //define a1
-    //glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.1f);  //define a2
-
-    //Fonte de Luz Direcional - Efeito de Holofote
-    GLfloat light1_pos[] = {-2.0f, 0.0f, 0.0f, 1.0f};
-    glLightfv(GL_LIGHT1,GL_POSITION,light1_pos);
-    glLightfv(GL_LIGHT1,GL_DIFFUSE, white);
-    glLightfv(GL_LIGHT1,GL_SPECULAR, white);
-    GLfloat direction[] = {1.0f, 0.0f, 0.0f};
-    glLightfv(GL_LIGHT1,GL_SPOT_DIRECTION,direction);       //vetor direção
-    glLightf(GL_LIGHT1,GL_SPOT_CUTOFF,45.0f);               //espalhamento angular
-    glLightf(GL_LIGHT1,GL_SPOT_EXPONENT,0.1f);              //atenuação angular
-
-    //Parâmetros definidos globalmente
-    //GLfloat global_ambient[] = {0.9f, 0.9f, 0.9f, 1.0f};
-    //glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
-    ////Reflexão especular definida como a posição de visão corrente
-    //glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
-    ////Habilitar cálculos de iluminação para ambas as faces dos polígonos
-    //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,GL_TRUE);
-
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
-}
 
 void init(void)
 {
     glEnable ( GL_COLOR_MATERIAL );
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); //define a cor de fundo
-    glEnable(GL_DEPTH_TEST); //habilita o teste de profundidade
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); 
+    glEnable(GL_DEPTH_TEST);
 
-    //glShadeModel(GL_FLAT);
+    
     glShadeModel(GL_SMOOTH);
     glEnable(GL_NORMALIZE);
 
-    glMatrixMode(GL_MODELVIEW); //define que a matrix é a model view
-    glLoadIdentity(); //carrega a matrix de identidade
-    /*gluLookAt(0.0, -30.0, 100.0,   //posição da câmera
-              0.0, 0.0, 0.0,   //para onde a câmera aponta
-              0.0, 1.0, 0.0);*/  //vetor view-up
+    glMatrixMode(GL_MODELVIEW); 
+    glLoadIdentity(); 
+   
     gluLookAt(obsX,obsY,obsZ, 0,0,0, 0,1,0);
 
-    glMatrixMode(GL_PROJECTION); //define que a matrix é a de projeção
-    glLoadIdentity(); //carrega a matrix de identidade
-    //glOrtho(-2.0, 2.0, -2.0, 2.0, 2.0, 8.0); //define uma projeção ortogonal
+    glMatrixMode(GL_PROJECTION); 
+    glLoadIdentity();
     
-    //gluPerspective(45.0, 1.0, 2.0, 8.0); //define uma projeção perspectiva
-    gluPerspective(45.0, (GLfloat)800 / (GLfloat)600, 0.5, 500);
-    //gluPerspective(angle, fAspect, 0.5, 500);
 
-    //glFrustum(-2.0, 2.0, -2.0, 2.0, 2.0, 8.0); //define uma projeção perspectiva simétrica
-    //glFrustum(-2.0, 1.0, -1.0, 2.0, 2.0, 8.0); //define uma projeção perspectiva obliqua
+    gluPerspective(45.0, (GLfloat)800 / (GLfloat)600, 0.5, 500);
+
     glViewport(0, 0, 800, 600);
 
-    //lightning();
 }
 
 void picture(int imagem){
@@ -251,12 +201,80 @@ void picture(int imagem){
     glEnd();
 }
 
+void campo(){
+    float size = 1.0;
+    GLfloat v[8][3];
+
+     v[0][0] = v[1][0] = v[2][0] = v[3][0] = -size / 2;
+     v[4][0] = v[5][0] = v[6][0] = v[7][0] = size / 2;
+     v[0][1] = v[1][1] = v[4][1] = v[5][1] = -size / 2;
+     v[2][1] = v[3][1] = v[6][1] = v[7][1] = size / 2;
+     v[0][2] = v[3][2] = v[4][2] = v[7][2] = -size / 2;
+     v[1][2] = v[2][2] = v[5][2] = v[6][2] = size / 2;
+
+    GLfloat n[3] = {0.0, 0.0, -2.0};
+
+    glBindTexture(GL_TEXTURE_2D, texture_id[2]);
+    glBegin(GL_QUADS);
+        glNormal3fv(&n[0]);
+
+        glTexCoord2f(0.0f,0.0f);
+        glVertex3fv(&v[5][0]);
+
+        glTexCoord2f(1.0f,0.0f);
+        glVertex3fv(&v[6][0]);
+        
+        glTexCoord2f(1.0f,1.0f);
+        glVertex3fv(&v[2][0]);
+        
+        glTexCoord2f(0.0f,1.0f);
+        glVertex3fv(&v[1][0]);
+    glEnd();
+
+}
+
 void startGame() {
 
     // Movendo o Pentaro
     ball_pos_x += ball_velocity_x;
     ball_pos_y += ball_velocity_y;
     rotate++;
+
+    if(eixo == 0){
+        angleY = 0.0f;
+        if(direcao == 0){
+            angleX = angleX + 0.01;
+            conta++;
+        }else{
+            angleX = angleX - 0.01;
+            conta--;
+        }
+
+        if(direcao == 0 && conta == 300){
+            direcao = 1;
+        }
+        if(direcao == 1 && conta == -300){
+            direcao = 0;
+        }
+    }
+
+    if(eixo == 1){
+        angleX = 0.0f;
+        if(direcao == 0){
+            angleY = angleY + 0.01;
+            conta++;
+        }else{
+            angleY= angleY - 0.01;
+            conta--;
+        }
+
+        if(direcao == 0 && conta == 300){
+            direcao = 1;
+        }
+        if(direcao == 1 && conta == -300){
+            direcao = 0;
+        }
+    }
 
     // Pentaro colidiu em cima ou em baixo
     if (ball_pos_y + ball_radius > alturaCampo || ball_pos_y - ball_radius < -alturaCampo)
@@ -266,8 +284,7 @@ void startGame() {
     if (ball_pos_x - ball_radius - 5 < -larguraCampo)// && ball_pos_x - ball_radius < -larguraCampo)
         if (ball_pos_y < P1y + 28 && ball_pos_y > P1y - 28) { //28 é a altura do player
             ball_velocity_x = -ball_velocity_x;
-            //ball_velocity_x += speed_increment;
-            //paddile_velocity += speed_increment;
+
         }
 
 
@@ -282,6 +299,12 @@ void startGame() {
         P1++;
         printf("Player 1 = %d \n", P1);
         ball_velocity_x = -ball_velocity_x;
+
+        if(eixo == 0){
+            eixo = 1;
+        }else{
+            eixo = 0;
+        }
     }
 
     // P2 pontuou
@@ -289,6 +312,27 @@ void startGame() {
         P2++;
         printf("Player 2 = %d \n", P2);
         ball_velocity_x = -ball_velocity_x;
+
+        if(eixo == 0){
+            eixo = 1;
+        }else{
+            eixo = 0;
+        }
+    }
+
+    if(P2 == 7 || P1 == 7){
+        if(P1 == 7){
+            winner = 1;
+        }else{
+            winner = 2;
+        }
+        ball_pos_x = ball_pos_y = 0;
+        P1y = P2y = 0;
+        P1 = P2 = 0;
+        eixo = -1;
+        rotate = 0;
+
+        glutIdleFunc(NULL);
     }
 
     glutPostRedisplay();
@@ -296,7 +340,7 @@ void startGame() {
 
 void GerenciaMouse(int button, int state, int x, int y) {
     switch (button) {
-        // Botao Esquerdo - Inicia uma velocidade aleatoria entre (ran(5) - rand(3))
+        
         case GLUT_LEFT_BUTTON:
             if (state == GLUT_DOWN){
             //ball_velocity_x = (rand() % 2);// -  (rand() % 3);
@@ -308,6 +352,8 @@ void GerenciaMouse(int button, int state, int x, int y) {
             printf("velocidade x = %f \n", ball_velocity_x);
             printf("veloficade y = %f \n", ball_velocity_y);
 
+            winner = 0;
+
             glutIdleFunc(startGame);
             }
             break;
@@ -317,6 +363,7 @@ void GerenciaMouse(int button, int state, int x, int y) {
             ball_pos_x = ball_pos_y = 0;
             P1y = P2y = 0;
             P1 = P2 = 0;
+            eixo = -1;
             if (state == GLUT_DOWN)
                 // Removendo bounce
                 glutIdleFunc(NULL);
@@ -327,15 +374,30 @@ void GerenciaMouse(int button, int state, int x, int y) {
 }
 
 void displayFunc() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //limpa o buffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
-        glMatrixMode(GL_MODELVIEW); //define que a matrix é a de modelo
+        glMatrixMode(GL_MODELVIEW);
 
 
         glPushMatrix();
+
         
-        glRotatef(angleX,1.0,0.0,0.0);
-        glRotatef(angleY,0.0,1.0,0.0);
+        if(eixo == -1){
+            glRotatef(0.0,1.0,0.0,0.0);
+            glRotatef(0.0,0.0,1.0,0.0);
+        }else{
+            glRotatef(angleX,1.0,0.0,0.0);
+            glRotatef(angleY,0.0,1.0,0.0);
+        }
+
+                //winner
+        if(winner != 0){
+            glPushMatrix();
+            glScalef(100.0,100.0,100.0);
+            
+            picture(winner-1);
+            glPopMatrix();
+        }
         
         //foto primeiro jogador
         glPushMatrix();
@@ -347,6 +409,19 @@ void displayFunc() {
           glRotatef(-90.0f,1.0,0.0,0.0);
           picture(0);
         glPopMatrix();
+
+
+        //campo
+        glPushMatrix();
+          //glTranslated(-190.0,150.0,0.0);
+          glScalef(400.0,255.0,-2.0);
+        
+          glRotatef(-270.0f,1.0,0.0,0.0);
+          glRotatef(-90.0f,0.0,1.0,0.0);
+          glRotatef(-90.0f,1.0,0.0,0.0);
+          campo();
+        glPopMatrix();
+
 
         //foto segundo jogador
         glPushMatrix();
@@ -361,6 +436,7 @@ void displayFunc() {
 
         
         glColor3f(1.0f, 1.0f, 1.0f);
+
         //NUMERO PLAYER 1
         numero(1,P1);
   
@@ -378,8 +454,6 @@ void displayFunc() {
         
         //BOLA
         Potaro(ball_pos_x,ball_pos_y,rotate); //nome da bola
-
-
 
         glPopMatrix();
 
@@ -439,11 +513,11 @@ void keyboard(unsigned char key, int x, int y)
 
 int main(int argc, char *argv[]){
     glutInit(&argc,argv);
-    //glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowPosition(50,50);
     glutInitWindowSize(800,600);
-    glutCreateWindow("Textura");
+    glutCreateWindow("PONG");
     glutDisplayFunc(displayFunc);
     glutMouseFunc(GerenciaMouse);
     glutSpecialFunc(rotacoes);

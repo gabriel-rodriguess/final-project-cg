@@ -38,9 +38,176 @@ void numero(int player, int num)
         glPopMatrix();
         break;
     case 1:
+        glPushMatrix();
+        glTranslated(10.0, 0.0, 0.0);
+        glScaled(1.0, 10.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+        break;
+    case 2:
+        glPushMatrix();
+        glTranslated(0.0, 25.0, 0.0);
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(0.0, -25.0, 0.0);
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(10.0, 10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-10.0, -10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+        break;   
+    case 3:
+        glPushMatrix();
+        glTranslated(0.0, 25.0, 0.0);
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(0.0, -25.0, 0.0);
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(10.0, 10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(10.0, -10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+        break;  
+    case 4:
+        glPushMatrix();
+        glTranslated(10.0, 10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-10.0, 10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(10.0, -10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+        break;
+    case 5:
+        glPushMatrix();
+        glTranslated(0.0, 25.0, 0.0);
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(0.0, -25.0, 0.0);
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-10.0, 10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(10.0, -10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+        break;
+    case 6:
+        glPushMatrix();
+        glTranslated(0.0, 25.0, 0.0);
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(0.0, -25.0, 0.0);
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-10.0, 10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-10.0, -10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(10.0, -10.0, 0.0);
+        glScaled(1.0, 5.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
         break;
 
-    default:
+    case 7:
+        glPushMatrix();
+        glTranslated(0.0, 25.0, 0.0);
+        glScaled(5.0, 1.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(10.0, 0.0, 0.0);
+        glScaled(1.0, 10.0, 1.0);
+        glutSolidCube(5.0f);
+        glPopMatrix();
+
         break;
     }
 
